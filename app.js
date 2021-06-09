@@ -29,7 +29,11 @@ prompt.get(["folderPath", "projectName", "addGit"], (err, res) => {
 
         // git init
         executeCommand(`git init`, completePath);
+        console.info("NPM Initialised.");
       }
+
+      // open in vs code
+      executeCommand(`code .`, completePath);
     } else {
       console.info(completePath, "folder already exists.");
     }
@@ -48,7 +52,6 @@ function createFile(completePath, name, data = "// Auto generated file") {
 function executeCommand(cmd, path) {
   exec(cmd, { cwd: path }, (err, stdout, stderr) => {
     if (err) throw console.error(err);
-    console.info("NPM Initialised.");
     console.log(stdout);
   });
 }
