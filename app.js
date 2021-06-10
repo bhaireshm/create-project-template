@@ -7,35 +7,62 @@ prompt.start();
 prompt.get(["folderPath", "projectName", "addGit"], (err, res) => {
   var folderPath = res.folderPath.replace(/"/g, "");
   var projectName = res.projectName.replace(/"/g, "");
-  var addGit = res.addGit.replace(/"/g, "");
+  var addGit = res.addGit.replace(/"/g, "").toLowerCase();
   var completePath = path.join(folderPath, projectName);
 
   // create sample folder
   try {
     if (!fs.existsSync(completePath)) {
       fs.mkdirSync(completePath);
-      console.info(completePath, "created.");
+      console.info("FOLDER:", completePath, "created.");
 
       // npm init
-      executeCommand(`npm init --y`, completePath);
+      executeCommand(`npm init --y`, completePath)
+        .then(() => {
+          console.info("LOG :", "NPM Initialised.");
 
-      // create app.js file
-      createFile(completePath, "app.js");
+          // create app.js file
+          createFile(completePath, "app.js");
 
-      // add git ??
-      if (addGit == "y") {
-        // add .gitignore file
-        createFile(completePath, ".gitignore", "node_modules");
+          // add git ??
+          if (addGit == "y" || addGit == "yes") {
+            // add .gitignore file
+            createFile(completePath, ".gitignore", "node_modules");
 
-        // git init
-        executeCommand(`git init`, completePath);
-        console.info("NPM Initialised.");
-      }
-
-      // open in vs code
-      executeCommand(`code .`, completePath);
+            // git init
+            return executeCommand(`git init`, completePath)
+              .then(() => {
+                console.info("LOG :", "Git Initialised.");
+                // git add all
+                return executeCommand(`git add .`, completePath);
+              })
+              .then(() => {
+                // git first commit
+                return executeCommand(
+                  `git commit -m "Initial Commit." .`,
+                  completePath
+                );
+              })
+              .catch((err) => {
+                console.error("LOG :", "Failed at", err.message);
+              });
+          }
+        })
+        .then(() => {
+          // open in vs code
+          return executeCommand(`code .`, completePath);
+        })
+        .then(() => {
+          console.info("LOG :", "Project template is ready.");
+          console.info("LOG :", "Opening VS Code...");
+          console.info("LOG :", "Process completed.");
+          setTimeout(() => {
+            process.exit(-1);
+          }, 20000);
+        })
+        .catch((err) => {});
     } else {
-      console.info(completePath, "folder already exists.");
+      console.info("LOG :", completePath, "folder already exists.");
     }
   } catch (err) {
     console.error(err);
@@ -45,13 +72,15 @@ prompt.get(["folderPath", "projectName", "addGit"], (err, res) => {
 function createFile(completePath, name, data = "// Auto generated file") {
   const fileStream = fs.createWriteStream(path.join(completePath, name));
   fileStream.write(data);
-  console.info(name, "file created.");
+  console.info("FILE:", name, "created.");
   fileStream.end();
 }
 
 function executeCommand(cmd, path) {
-  exec(cmd, { cwd: path }, (err, stdout, stderr) => {
-    if (err) throw console.error(err);
-    console.log(stdout);
+  return new Promise((resolve, reject) => {
+    exec(cmd, { cwd: path }, (err, stdout, stderr) => {
+      if (err) return reject(err);
+      return resolve(stdout);
+    });
   });
 }
