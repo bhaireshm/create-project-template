@@ -27,7 +27,8 @@ prompt.get(["folderPath", "projectName", "addGit"], (err, res) => {
           // add git ??
           if (addGit == "y" || addGit == "yes") {
             // add .gitignore file
-            createFile(completePath, ".gitignore", "node_modules");
+            const gid = fs.readFileSync("./gitignore-template.txt");
+            createFile(completePath, ".gitignore", gid);
 
             // git init
             return executeCommand(`git init`, completePath)
@@ -58,7 +59,7 @@ prompt.get(["folderPath", "projectName", "addGit"], (err, res) => {
           console.info("LOG :", "Process completed.");
           setTimeout(() => {
             process.exit(-1);
-          }, 20000);
+          }, 2000);
         })
         .catch((err) => {});
     } else {
@@ -76,7 +77,7 @@ function createFile(completePath, name, data = "// Auto generated file") {
   fileStream.end();
 }
 
-function executeCommand(cmd, path) {
+function executeCommand(cmd, path = __dirname) {
   return new Promise((resolve, reject) => {
     exec(cmd, { cwd: path }, (err, stdout, stderr) => {
       if (err) return reject(err);
