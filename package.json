@@ -1,17 +1,25 @@
 {
   "name": "@bhairesh/cpt",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "description": "Create project template. NodeJS and React, git included.",
   "main": "app.js",
   "private": false,
   "scripts": {
     "start": "node app.js"
   },
-  "keywords": [],
+  "keywords": [
+    "project-template",
+    "template",
+    "nodejs",
+    "react"
+  ],
   "author": "Bhairesh M <bhairesh@arithaconsulting.com>",
   "license": "ISC",
   "dependencies": {
     "prompt": "^1.1.0"
   },
-  "devDependencies": {},
-  "description": "Create project template. NodeJS and React, git included."
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bhaireshm/create-project-template"
+  }
 }
