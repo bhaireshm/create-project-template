@@ -22,7 +22,7 @@ prompt.get(schema, (err, res) => {
   // create sample folder
   try {
     if (!fs.existsSync(completePath)) {
-      fs.mkdirSync(completePath);
+      fs.mkdirSync(completePath, { recursive: true });
       console.info("FOLDER:", completePath, "created.");
 
       const isNode = typeOfJS === "n" || typeOfJS === "nodejs" ? true : false;
@@ -41,7 +41,7 @@ prompt.get(schema, (err, res) => {
             // add git ??
             if (addGit == "y" || addGit == "yes") {
               // add .gitignore file
-              const gid = fs.readFileSync("./templates/gitignore.txt");
+              const gid = fs.readFileSync(path.join("src", "templates", "gitignore.txt"));
               createFile(completePath, ".gitignore", gid);
 
               // git init
