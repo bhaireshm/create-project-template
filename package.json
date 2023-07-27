@@ -6,7 +6,12 @@
   "scripts": {
     "start": "node app.js"
   },
-  "keywords": [],
+  "keywords": [
+    "project-template",
+    "template",
+    "nodejs",
+    "react"
+  ],
   "author": "Bhairesh M <bhairesh@arithaconsulting.com>",
   "license": "ISC",
   "dependencies": {
