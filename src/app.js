@@ -1,22 +1,23 @@
-const { exec } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const prompt = require("prompt");
+const { executeCommand, createFile } = require("./utils.js");
+const { defaultProjectPath } = require("./constants.js");
+
 const schema = [
   { name: "folderPath", description: "Folder Complete Path", required: false },
   { name: "projectName", description: "Project Name", required: true },
   { name: "addGit", description: "Add git ?", required: true },
   { name: "typeOfJS", description: "NodeJS(node,n) or React(react,r)", required: true },
 ];
-const defaultProjectPath = path.join("D:", "My_Codes");
 
 prompt.start();
 prompt.get(schema, (err, res) => {
-  var folderPath = res.folderPath.replace(/"/g, "") || defaultProjectPath;
-  var projectName = res.projectName.replace(/"/g, "");
-  var addGit = res.addGit.replace(/"/g, "").toLowerCase();
-  var typeOfJS = res.typeOfJS.replace(/"/g, "").toLowerCase();
-  var completePath = path.join(folderPath, projectName);
+  let folderPath = res.folderPath.replace(/"/g, "") || defaultProjectPath;
+  let projectName = res.projectName.replace(/"/g, "");
+  let addGit = res.addGit.replace(/"/g, "").toLowerCase();
+  let typeOfJS = res.typeOfJS.replace(/"/g, "").toLowerCase();
+  let completePath = path.join(folderPath, projectName);
 
   // create sample folder
   try {
@@ -40,7 +41,7 @@ prompt.get(schema, (err, res) => {
             // add git ??
             if (addGit == "y" || addGit == "yes") {
               // add .gitignore file
-              const gid = fs.readFileSync("./gitignore-template.txt");
+              const gid = fs.readFileSync("./templates/gitignore.txt");
               createFile(completePath, ".gitignore", gid);
 
               // git init
@@ -48,7 +49,7 @@ prompt.get(schema, (err, res) => {
                 await executeCommand(`git init`, completePath);
                 console.info("LOG :", "Git Initialised.");
                 await executeCommand(`git add .`, completePath);
-                return await executeCommand(`git commit -m "Initial Commit." .`, completePath);
+                return await executeCommand(`git commit -m ":tada: Initial Commit."`, completePath);
               } catch (err) {
                 console.error("LOG :", "Failed at", err.message);
               }
@@ -71,24 +72,9 @@ prompt.get(schema, (err, res) => {
         .catch(console.log);
     } else {
       console.info("LOG :", completePath, "folder already exists.");
+      // todo: override? prompt
     }
   } catch (err) {
     console.error(err);
   }
 });
-
-function createFile(completePath, name, data = "// Auto generated file") {
-  const fileStream = fs.createWriteStream(path.join(completePath, name));
-  fileStream.write(data);
-  console.info("FILE:", name, "created.");
-  fileStream.end();
-}
-
-function executeCommand(cmd, path = defaultProjectPath) {
-  return new Promise((resolve, reject) => {
-    exec(cmd, { cwd: path }, (err, stdout, stderr) => {
-      if (err) return reject(err, stderr);
-      return resolve(stdout, stderr);
-    });
-  });
-}

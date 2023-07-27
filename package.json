@@ -1,16 +1,17 @@
 {
-  "name": "create-project-template",
-  "version": "1.0.0",
+  "name": "@bhairesh/cpt",
+  "version": "0.0.1-alpha.1",
   "main": "app.js",
+  "private": false,
   "scripts": {
     "start": "node app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Bhairesh M <bhairesh@arithaconsulting.com>",
   "license": "ISC",
   "dependencies": {
     "prompt": "^1.1.0"
   },
   "devDependencies": {},
-  "description": ""
+  "description": "Create project template. NodeJS and React, git included."
 }
