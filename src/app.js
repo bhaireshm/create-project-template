@@ -36,7 +36,7 @@ prompt.get(schema, (err, res) => {
 
           if (isNode) {
             // create app.js file
-            createFile(completePath, "app.js");
+            createFile(completePath, "index.js");
 
             // add git ??
             if (addGit == "y" || addGit == "yes") {
